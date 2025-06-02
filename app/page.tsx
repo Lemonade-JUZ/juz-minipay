@@ -7,7 +7,7 @@ import { erc20Abi, parseEther } from "viem"
 import { useWriteContract } from "wagmi"
 
 const DEV_ADDRESS = "0xA353557ddfc96325a8ab18E6f6d9c1fC0d7C1eA6"
-export default function Home() {
+export default function PageHome() {
   const { toast } = useToast()
   const { address, isMiniPay } = useWalletAuth()
 
@@ -23,7 +23,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex bg-gradient-to-br from-juz-orange/0 via-juz-orange/0 to-juz-orange/7 p-4 pt-6 min-h-full flex-col gap-2">
+    <main className="flex bg-gradient-to-br from-juz-orange/0 via-juz-orange/0 to-juz-orange/7 px-4 pt-6 min-h-full flex-col gap-2">
       <h2 className="font-title text-xl">Welcome to JUZ</h2>
       <div className="flex-grow" />
 
@@ -38,6 +38,8 @@ export default function Home() {
           ? "Connecting..."
           : "Connect Wallet"}
       </Button>
+
+      <div className="my-3" />
     </main>
   )
 }
