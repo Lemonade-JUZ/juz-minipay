@@ -20,6 +20,10 @@ export const useWalletAuth = () => {
   return {
     isMiniPay,
     address,
+    profilePictureUrl: null,
     isConnected,
+    signIn: () => {
+      connect({ connector: injected() })
+    },
   }
 }
