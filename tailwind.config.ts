@@ -27,12 +27,37 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      width: { "2px": "2px" },
+      height: {
+        navigation: "4.5rem",
+      },
+      borderWidth: {
+        3: "3px",
+      },
+      boxShadow: {
+        "3d-bottom": "0px 2px var(--tw-shadow-color, black)",
+        "3d": "2px 2px var(--tw-shadow-color, black)",
+        "3d-lg": "3px 3px var(--tw-shadow-color, black)",
+      },
       opacity: {
         "2": ".02",
         "3": ".03",
         "7": ".07",
       },
       colors: {
+        juz: {
+          orange: {
+            DEFAULT: "#FF7110",
+          },
+          green: {
+            DEFAULT: "#11C153",
+            lime: "#00FF60",
+            ish: "#c5f3b3",
+          },
+          red: {
+            DEFAULT: "#FF3131",
+          },
+        },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
