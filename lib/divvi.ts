@@ -1,5 +1,8 @@
+"use client"
+
 import type { Hash } from "viem"
 import { getDataSuffix, submitReferral } from "@divvi/referral-sdk"
+import { useWriteContract } from "wagmi"
 import { celo } from "viem/chains"
 
 export const appendDivviSuffix = () => {
@@ -12,9 +15,33 @@ export const appendDivviSuffix = () => {
   }) as Hash
 }
 
-export const withDivviSuffix = async (tx: Promise<Hash>) => {
+export const withDivviSuffix = async (tx: Promise<Hash> | Hash) => {
+  const txHash = await tx
   await submitReferral({
-    txHash: await tx,
     chainId: celo.id,
+    txHash,
   })
+
+  return txHash
+}
+
+/**
+ * Hook to send a transaction + append Divvi suffix
+ * Follows wagmi's `useSendTransaction` hook
+ */
+export const useSendTransaction = () => {
+  const { writeContractAsync } = useWriteContract()
+
+  return {
+    sendTransaction: async (
+      config: Parameters<typeof writeContractAsync>[0]
+    ) => {
+      const txHash = await writeContractAsync({
+        ...config,
+        dataSuffix: appendDivviSuffix(),
+      })
+
+      return withDivviSuffix(txHash)
+    },
+  }
 }
