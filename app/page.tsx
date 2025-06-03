@@ -1,6 +1,7 @@
 "use client"
 
 import { useWalletAuth } from "@/hooks/wallet"
+import { appendDivviSuffix, withDivviSuffix } from "@/lib/divvi"
 import { beautifyAddress } from "@/lib/utils"
 import { Button, useToast } from "@worldcoin/mini-apps-ui-kit-react"
 import { erc20Abi, parseEther } from "viem"
@@ -11,15 +12,18 @@ export default function PageHome() {
   const { toast } = useToast()
   const { address, isMiniPay } = useWalletAuth()
 
-  const { writeContract } = useWriteContract()
+  const { writeContractAsync } = useWriteContract()
 
   function handleSendCUSD() {
-    writeContract({
-      address: "0x765DE816845861e75A25fCA122bb6898B8B1282a",
-      abi: erc20Abi,
-      functionName: "transfer",
-      args: [DEV_ADDRESS, parseEther("0.1")], // Adjust the recipient address and amount as needed
-    })
+    withDivviSuffix(
+      writeContractAsync({
+        address: "0x765DE816845861e75A25fCA122bb6898B8B1282a",
+        abi: erc20Abi,
+        dataSuffix: appendDivviSuffix(),
+        functionName: "transfer",
+        args: [DEV_ADDRESS, parseEther("0.1")], // Adjust the recipient address and amount as needed
+      })
+    )
   }
 
   return (
