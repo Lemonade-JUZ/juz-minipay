@@ -31,8 +31,8 @@ export default function LemonIcon({
             y2="12.2508"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#00FF60" />
-            <stop offset="1" stop-color="#DDFFC2" />
+            <stop stopColor="#00FF60" />
+            <stop offset="1" stopColor="#DDFFC2" />
           </linearGradient>
         </defs>
       </svg>

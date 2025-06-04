@@ -36,6 +36,9 @@ export const useSendTransaction = () => {
     sendTransaction: async (
       config: Parameters<typeof writeContractAsync>[0]
     ) => {
+      // TODO: As mentioned in https://app.divvi.xyz/builders/onboarding?step=integration
+      // we should do this process only once per address.
+      // A hotfix can be to store the referral (msg.sender) in localStorage or a database to avoid multiple submissions.
       const txHash = await writeContractAsync({
         ...config,
         dataSuffix: appendDivviSuffix(),
