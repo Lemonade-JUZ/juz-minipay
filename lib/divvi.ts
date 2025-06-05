@@ -4,6 +4,9 @@ import type { Hash } from "viem"
 import { getDataSuffix, submitReferral } from "@divvi/referral-sdk"
 import { useWriteContract } from "wagmi"
 import { celo } from "viem/chains"
+import { atomWithStorage } from "jotai/utils"
+import { useWalletAuth } from "@/hooks/wallet"
+import { useAtom } from "jotai"
 
 export const appendDivviSuffix = () => {
   return getDataSuffix({
@@ -15,36 +18,56 @@ export const appendDivviSuffix = () => {
   }) as Hash
 }
 
-export const withDivviSuffix = async (tx: Promise<Hash> | Hash) => {
-  const txHash = await tx
-  await submitReferral({
-    chainId: celo.id,
-    txHash,
-  })
-
-  return txHash
-}
+// A list of addresses where we call `appendDivviSuffix`
+// to include the users in the Divvi referral program
+const atomReferredAddresses = atomWithStorage(
+  "juz.mini.referredAddresses",
+  {} as Record<string, string[]>
+)
 
 /**
  * Hook to send a transaction + append Divvi suffix
  * Follows wagmi's `useSendTransaction` hook
  */
 export const useSendTransaction = () => {
+  const { address } = useWalletAuth()
   const { writeContractAsync } = useWriteContract()
+
+  const [referredAddresses, setReferredAddresses] = useAtom(
+    atomReferredAddresses
+  )
 
   return {
     sendTransaction: async (
       config: Parameters<typeof writeContractAsync>[0]
     ) => {
-      // TODO: As mentioned in https://app.divvi.xyz/builders/onboarding?step=integration
-      // we should do this process only once per address.
-      // A hotfix can be to store the referral (msg.sender) in localStorage or a database to avoid multiple submissions.
+      const isSenderAlreadyReferredForContract = address
+        ? referredAddresses?.[address]?.includes(config.address)
+        : // Do not refer if disconnected
+          true
+
       const txHash = await writeContractAsync({
         ...config,
         dataSuffix: appendDivviSuffix(),
       })
 
-      return withDivviSuffix(txHash)
+      if (!isSenderAlreadyReferredForContract && address) {
+        // If connected and not referred
+        // Refer the address to Divvi
+        // This will only happen once per contract address
+
+        setReferredAddresses((prev) => ({
+          ...prev,
+          [address]: [...(prev[address] || []), config.address],
+        }))
+
+        await submitReferral({
+          chainId: celo.id,
+          txHash,
+        })
+      }
+
+      return txHash
     },
   }
 }
