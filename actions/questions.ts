@@ -1,8 +1,9 @@
 "use server"
 
-import { getModelForTask } from "@/lib/ai"
 import { generateObject } from "ai"
 import { z } from "zod"
+import { shuffleArray } from "@/lib/arrays"
+import { getModelForTask } from "@/lib/ai"
 
 const QuestionListSchema = z.object({
   topic: z.string(),
@@ -41,18 +42,12 @@ Generate a list of ${amount} questions about "${topic}".
   const questions = object.questions.map(({ options, question }) => {
     // Prompt has to give FIRST element as correct now
     const correctOptionContent = options[0]
-    const shuffled = [...options]
-
-    // Shuffle by swapping random pairs
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-    }
+    const shuffledOptions = shuffleArray(options)
 
     return {
       question,
-      options: shuffled,
-      correctOptionIndex: shuffled.indexOf(correctOptionContent),
+      options: shuffledOptions,
+      correctOptionIndex: shuffledOptions.indexOf(correctOptionContent),
     }
   })
 

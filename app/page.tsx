@@ -1,26 +1,31 @@
 "use client"
 
-import { Fragment, useState } from "react"
+import { useState } from "react"
 import { erc20Abi, parseEther } from "viem"
-import { Button, useToast } from "@worldcoin/mini-apps-ui-kit-react"
+import { useToast } from "@worldcoin/mini-apps-ui-kit-react"
 
-import { getDispenserPayload } from "@/actions/dispenser"
-import { useWalletAuth } from "@/hooks/wallet"
+import WheelSpin from "@/components/WheelSpin"
+
 import { ABI_DISPENSER } from "@/lib/abis"
 import { ADDRESS_DISPENSER } from "@/lib/constants"
+
+import { incrPlayerJUZEarned } from "@/actions/game"
+import { getDispenserPayload } from "@/actions/dispenser"
+
+import { useWalletAuth } from "@/hooks/wallet"
+import { useCommonTriviaTopics } from "@/hooks/topics"
 import { useSendTransaction } from "@/hooks/divvi"
-import { beautifyAddress } from "@/lib/utils"
-import WheelSpin from "@/components/WheelSpin"
+
+import ModalGame from "./ModalGame"
 
 const DEV_ADDRESS = "0xA353557ddfc96325a8ab18E6f6d9c1fC0d7C1eA6"
 export default function PageHome() {
   const { toast } = useToast()
-  const { address, isMiniPay, signIn } = useWalletAuth()
+  const { address, isConnected, signIn } = useWalletAuth()
+  const { gameTopics, shuffleTopics } = useCommonTriviaTopics()
 
   const { sendTransaction } = useSendTransaction()
   const [showGame, setShowGame] = useState(null as { topic?: string } | null)
-
-  console.debug({ showGame })
 
   function handleSendCUSD() {
     sendTransaction({
@@ -54,19 +59,37 @@ export default function PageHome() {
     }
   }
 
+  function handleGameWon(wonJUZ: number) {
+    if (address) incrPlayerJUZEarned(address, wonJUZ)
+    toast.success({
+      title: `You won ${wonJUZ} JUZ!`,
+    })
+  }
+
   return (
     <main className="flex bg-gradient-to-br from-juz-orange/0 via-juz-orange/0 to-juz-orange/7 px-4 pt-6 min-h-full flex-col gap-2">
+      <ModalGame
+        topic={showGame?.topic}
+        open={Boolean(showGame?.topic)}
+        onGameWon={handleGameWon}
+        onOpenChange={() => setShowGame(null)}
+      />
+
       <div className="size-full rounded-full mt-12 overflow-clip grid place-items-center">
         <WheelSpin
-          enableSpin
-          onItemSelected={(topic) => {
-            toast.success({
-              title: `Topic selected ${topic}`,
-            })
-            setShowGame({ topic })
+          enableSpin={isConnected}
+          onClick={() => {
+            if (!isConnected) {
+              // Prompt login when not connected
+              return signIn()
+            }
           }}
+          onItemSelected={(topic) => {
+            setShowGame({ topic })
+            setTimeout(shuffleTopics, 250)
+          }}
+          items={gameTopics}
           size="min(calc(95vw - 2rem), 24rem)"
-          items={["Animals", "History", "Science"]}
         />
       </div>
       <div className="my-3" />
