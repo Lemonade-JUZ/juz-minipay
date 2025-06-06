@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { noOp } from "./utils"
+import { noOp } from "../lib/utils"
 
 const ASSETS = {
   success: "/audio/success.mp3",
