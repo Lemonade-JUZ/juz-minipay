@@ -56,15 +56,23 @@ export const useSendTransaction = () => {
         // Refer the address to Divvi
         // This will only happen once per contract address
 
-        setReferredAddresses((prev) => ({
-          ...prev,
-          [address]: [...(prev[address] || []), config.address],
-        }))
-
-        await submitReferral({
+        submitReferral({
           chainId: celo.id,
           txHash,
         })
+          .then(({ status }) => {
+            if (status === 200) {
+              // Store the referred address only when successful
+              setReferredAddresses((prev) => ({
+                ...prev,
+                [address]: [...(prev[address] || []), config.address],
+              }))
+            }
+          })
+          .catch((error) => {
+            // We don't want to block the user if divvi submission fails
+            console.error({ error })
+          })
       }
 
       return txHash
