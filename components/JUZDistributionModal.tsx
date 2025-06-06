@@ -49,6 +49,7 @@ export default function JUZDistributionModal({
     }
   }
 
+  // TODO: Add a timer when user claims JUZ Tokens for balances to refresh
   return (
     <ReusableDialog
       title="JUZ Distribution"

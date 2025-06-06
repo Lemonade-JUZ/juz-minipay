@@ -52,7 +52,7 @@ export default function DialogProfileTrigger() {
         </button>
       }
     >
-      <nav className="flex items-center gap-2">
+      <nav className="flex mt-0.5 pb-2 items-center gap-2">
         <div
           style={{
             backgroundImage: `url(${image})`,
@@ -63,13 +63,20 @@ export default function DialogProfileTrigger() {
         <div className="px-3">
           <button
             onClick={handleCopyAddress}
-            className="text-sm mb-1 font-medium group flex items-center gap-2 text-black"
+            className="text-lg mb-0.5 font-medium group flex items-center gap-2 text-black"
           >
             {beautifyAddress(address || "", 7, "..")}
             <FiCopy className="group-active:scale-110" />
           </button>
-          <div className="text-xs">{played} Games played</div>
-          <div className="text-xs">{won} Games won</div>
+
+          <div className="text-sm">
+            <span className="mr-1">🎲</span>Games played:{" "}
+            <strong>{played}</strong>
+          </div>
+
+          <div className="text-sm">
+            <span className="mr-1">👑</span>Games won: <strong>{won}</strong>
+          </div>
         </div>
       </nav>
     </ReusableDialog>
