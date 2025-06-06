@@ -1,5 +1,7 @@
 "use client"
 
+import copy from "clipboard-copy"
+import { useToast } from "@worldcoin/mini-apps-ui-kit-react"
 import { useProfileImage } from "@/hooks/user"
 import { useAccountBalances } from "@/hooks/balances"
 import { useWalletAuth } from "@/hooks/wallet"
@@ -17,7 +19,17 @@ import LemonIcon from "@/components/LemonIcon"
 
 export default function NavigationTop() {
   const { image } = useProfileImage()
+  const { toast } = useToast()
   const { address, isConnected, signIn } = useWalletAuth()
+
+  function handleCopyAddress() {
+    if (address) {
+      copy(address)
+      return toast.success({
+        title: "Address copied to clipboard",
+      })
+    }
+  }
 
   return (
     <FixedTopContainer className="border-b shrink-0 px-5 flex items-center gap-4">
@@ -51,10 +63,14 @@ export default function NavigationTop() {
             style={{
               backgroundImage: `url(${image})`,
             }}
-            className="size-14 shrink-0 bg-cover rounded-2xl border-3 border-black shadow-3d"
+            className="size-16 shrink-0 bg-cover rounded-2xl border-3 border-black shadow-3d"
           />
-          <div className="px-4">
-            <button className="text-sm mb-1 font-medium group flex items-center gap-2 text-black">
+
+          <div className="px-3">
+            <button
+              onClick={handleCopyAddress}
+              className="text-sm mb-1 font-medium group flex items-center gap-2 text-black"
+            >
               {beautifyAddress(address || "", 7, "..")}
               <FiCopy className="group-active:scale-110" />
             </button>
