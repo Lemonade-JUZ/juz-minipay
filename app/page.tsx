@@ -1,6 +1,6 @@
 "use client"
 
-import { Fragment } from "react"
+import { Fragment, useState } from "react"
 import { erc20Abi, parseEther } from "viem"
 import { Button, useToast } from "@worldcoin/mini-apps-ui-kit-react"
 
@@ -8,7 +8,7 @@ import { getDispenserPayload } from "@/actions/dispenser"
 import { useWalletAuth } from "@/hooks/wallet"
 import { ABI_DISPENSER } from "@/lib/abis"
 import { ADDRESS_DISPENSER } from "@/lib/constants"
-import { useSendTransaction } from "@/lib/divvi"
+import { useSendTransaction } from "@/hooks/divvi"
 import { beautifyAddress } from "@/lib/utils"
 import WheelSpin from "@/components/WheelSpin"
 
@@ -18,6 +18,9 @@ export default function PageHome() {
   const { address, isMiniPay, signIn } = useWalletAuth()
 
   const { sendTransaction } = useSendTransaction()
+  const [showGame, setShowGame] = useState(null as { topic?: string } | null)
+
+  console.debug({ showGame })
 
   function handleSendCUSD() {
     sendTransaction({
@@ -58,11 +61,12 @@ export default function PageHome() {
           enableSpin
           onItemSelected={(topic) => {
             toast.success({
-              title: `Selected: ${topic}`,
+              title: `Topic selected ${topic}`,
             })
+            setShowGame({ topic })
           }}
           size="min(calc(95vw - 2rem), 24rem)"
-          items={["JUZ Token", "Celo USD", "Nothing"]}
+          items={["Animals", "History", "Science"]}
         />
       </div>
       <div className="my-3" />

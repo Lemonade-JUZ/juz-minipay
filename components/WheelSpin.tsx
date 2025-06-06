@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Image from "next/image"
 
-import { useAudioMachine } from "@/lib/sounds"
+import { useAudioMachine } from "@/hooks/sounds"
 import { motion, useAnimationControls } from "framer-motion"
 import { cn } from "@/lib/utils"
 
