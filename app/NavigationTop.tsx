@@ -10,9 +10,10 @@ import { beautifyAddress } from "@/lib/utils"
 import { FiCopy } from "react-icons/fi"
 import { FaRegLemon } from "react-icons/fa"
 
-import LemonIcon from "@/components/LemonIcon"
+import JUZDistributionModal from "@/components/JUZDistributionModal"
 import FixedTopContainer from "@/components/FixedTopContainer"
 import ReusableDialog from "@/components/ReusableDialog"
+import LemonIcon from "@/components/LemonIcon"
 
 export default function NavigationTop() {
   const { image } = useProfileImage()
@@ -63,7 +64,7 @@ export default function NavigationTop() {
         </nav>
       </ReusableDialog>
       <div className="flex-grow" />
-      <JUZCounter />
+      <JUZDistributionModal trigger={<JUZCounter />} />
     </FixedTopContainer>
   )
 }
