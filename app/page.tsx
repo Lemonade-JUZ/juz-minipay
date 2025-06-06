@@ -3,7 +3,11 @@
 import { useState } from "react"
 import { useToast } from "@worldcoin/mini-apps-ui-kit-react"
 
-import { incrPlayerJUZEarned } from "@/actions/game"
+import {
+  incrementGamesPlayed,
+  incrementGamesWon,
+  incrPlayerJUZEarned,
+} from "@/actions/game"
 
 import { FaHeart, FaHeartBroken } from "react-icons/fa"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs"
@@ -25,7 +29,11 @@ export default function PageHome() {
   const { hearts } = usePlayerHearts()
 
   function handleGameWon(wonJUZ: number) {
-    if (address) incrPlayerJUZEarned(address, wonJUZ)
+    if (address) {
+      incrementGamesWon(address)
+      incrPlayerJUZEarned(address, wonJUZ)
+    }
+
     toast.success({
       title: `You won ${wonJUZ} JUZ!`,
     })
@@ -95,6 +103,8 @@ export default function PageHome() {
                 onItemSelected={(topic) => {
                   setShowGame({ topic })
                   setTimeout(shuffleTopics, 250)
+
+                  if (address) incrementGamesPlayed(address)
                 }}
                 items={gameTopics}
                 size="min(calc(95vw - 2rem), 24rem)"

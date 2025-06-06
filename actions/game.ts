@@ -6,6 +6,8 @@ import { getClaimedJUZ } from "@/lib/juz"
 
 const redis = Redis.fromEnv()
 
+const getPlayedGameKey = (address: Address) => `juz.games.played.${address}`
+const getWonGamesKey = (address: Address) => `juz.games.won.${address}`
 const getJUZEarnedKey = (address: Address) => `juz.earned.${address}`
 
 const normalizeJUZEarned = ({
@@ -19,8 +21,28 @@ const normalizeJUZEarned = ({
   return Math.max(0, gamePoints > erc20Claimed ? gamePoints - erc20Claimed : 0)
 }
 
+export const incrementGamesPlayed = async (address: Address) => {
+  await redis.incr(getPlayedGameKey(address))
+}
+
+export const incrementGamesWon = async (address: Address) => {
+  await redis.incr(getWonGamesKey(address))
+}
+
 export const incrPlayerJUZEarned = async (address: Address, amount: number) => {
   await redis.incrbyfloat(getJUZEarnedKey(address), amount)
+}
+
+export const getPlayerGameData = async (address: Address) => {
+  const [gamesPlayed = 0, gamesWon = 0] = await Promise.all([
+    redis.get(getPlayedGameKey(address)),
+    redis.get(getWonGamesKey(address)),
+  ])
+
+  return {
+    played: Number(gamesPlayed),
+    won: Number(gamesWon),
+  }
 }
 
 export const getPlayerPoints = (address: Address) => {

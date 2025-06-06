@@ -1,6 +1,10 @@
+"use client"
+
+import useSWR from "swr"
 import { useToast } from "@worldcoin/mini-apps-ui-kit-react"
 import { atomWithStorage } from "jotai/utils"
 import { useAtom } from "jotai"
+import { getPlayerGameData } from "@/actions/game"
 import { useWalletAuth } from "./wallet"
 
 const atomImage = atomWithStorage("juz.mini.imagePF", null as string | null)
@@ -34,5 +38,23 @@ export const useProfileImage = () => {
     setImage,
     // Do not show localStorage image if user is not connected
     image: isConnected ? localStorageImage || WORLD_IMAGES : WORLD_IMAGES,
+  }
+}
+
+export const useAccountGameData = () => {
+  const { address } = useWalletAuth()
+
+  const { data = {} } = useSWR(
+    address ? `played.games.${address}` : null,
+    async () => {
+      if (!address) return {}
+      return await getPlayerGameData(address)
+    }
+  )
+
+  return {
+    played: 0,
+    won: 0,
+    ...data,
   }
 }
