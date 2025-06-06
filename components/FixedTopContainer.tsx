@@ -17,7 +17,7 @@ export default function FixedTopContainer({
       >
         {children}
       </div>
-      <div className="pointer-events-none w-full h-navigation" />
+      <div className="pointer-events-none w-full shrink-0 h-navigation" />
     </Fragment>
   )
 }
