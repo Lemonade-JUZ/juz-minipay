@@ -1,8 +1,10 @@
 "use client"
 
 import { useProfileImage } from "@/hooks/user"
-import { shortifyDecimals } from "@/lib/numbers"
+import { useAccountBalances } from "@/hooks/balances"
 import { useWalletAuth } from "@/hooks/wallet"
+
+import { shortifyDecimals } from "@/lib/numbers"
 import { beautifyAddress } from "@/lib/utils"
 
 import { FiCopy } from "react-icons/fi"
@@ -67,13 +69,18 @@ export default function NavigationTop() {
 }
 
 export function JUZCounter({ ...props }) {
+  const { TotalJUZBalance, JUZPoints } = useAccountBalances()
+
   return (
     <button {...props} className="flex whitespace-nowrap items-center gap-2">
       <LemonIcon className="size-9 relative">
+        {JUZPoints.isOnchainSynced ? null : (
+          <figure className="absolute -bottom-1 -right-1 size-3.5 bg-juz-green-lime border-2 border-black rounded-full" />
+        )}
         <FaRegLemon className="text-xl" />
       </LemonIcon>
       <span className="text-xl font-semibold">
-        {shortifyDecimals(0, 2)} JUZ
+        {shortifyDecimals(TotalJUZBalance.formatted, 2)} JUZ
       </span>
     </button>
   )
