@@ -10,6 +10,7 @@ import { ABI_DISPENSER } from "@/lib/abis"
 import { ADDRESS_DISPENSER } from "@/lib/constants"
 import { useSendTransaction } from "@/lib/divvi"
 import { beautifyAddress } from "@/lib/utils"
+import WheelSpin from "@/components/WheelSpin"
 
 const DEV_ADDRESS = "0xA353557ddfc96325a8ab18E6f6d9c1fC0d7C1eA6"
 export default function PageHome() {
@@ -52,29 +53,18 @@ export default function PageHome() {
 
   return (
     <main className="flex bg-gradient-to-br from-juz-orange/0 via-juz-orange/0 to-juz-orange/7 px-4 pt-6 min-h-full flex-col gap-2">
-      <h2 className="font-title text-xl">Welcome to JUZ</h2>
-      <div className="flex-grow" />
-
-      {address ? (
-        <Fragment>
-          <Button onClick={handleClaimJUZToken} variant="tertiary">
-            Claim 1 JUZ
-          </Button>
-
-          <Button onClick={handleSendCUSD} variant="secondary">
-            Send cUSD
-          </Button>
-        </Fragment>
-      ) : null}
-
-      <Button>
-        {address
-          ? beautifyAddress(address)
-          : isMiniPay
-          ? "Connecting..."
-          : "Connect Wallet"}
-      </Button>
-
+      <div className="size-full rounded-full mt-12 overflow-clip grid place-items-center">
+        <WheelSpin
+          enableSpin
+          onItemSelected={(topic) => {
+            toast.success({
+              title: `Selected: ${topic}`,
+            })
+          }}
+          size="min(calc(95vw - 2rem), 24rem)"
+          items={["JUZ Token", "Celo USD", "Nothing"]}
+        />
+      </div>
       <div className="my-3" />
     </main>
   )
