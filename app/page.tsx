@@ -93,11 +93,17 @@ export default function PageHome() {
           <div className="px-4 mb-12">
             <div className="size-full rounded-full mt-12 overflow-clip grid place-items-center">
               <WheelSpin
-                enableSpin={isConnected}
+                enableSpin={isConnected && hearts > 0}
                 onClick={() => {
                   if (!isConnected) {
                     // Prompt login when not connected
                     return signIn()
+                  }
+
+                  if (hearts <= 0) {
+                    return toast.error({
+                      title: "No points left",
+                    })
                   }
                 }}
                 onItemSelected={(topic) => {

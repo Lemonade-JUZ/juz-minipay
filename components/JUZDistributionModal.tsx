@@ -21,7 +21,7 @@ export default function JUZDistributionModal({
 }) {
   const { toast } = useToast()
   const { address, signIn } = useWalletAuth()
-  const { JUZToken, JUZPoints } = useAccountBalances()
+  const { JUZToken, JUZPoints, revalidateTimeSynced } = useAccountBalances()
   const { sendTransaction } = useSendTransaction()
 
   const showClaimOnchain = !JUZPoints.isOnchainSynced
@@ -38,6 +38,7 @@ export default function JUZDistributionModal({
         args: [amount, deadline, signature],
       })
 
+      revalidateTimeSynced() // Revalidate syncing state
       toast.success({
         title: `Yaay ${shortifyDecimals(formatEther(amount))} JUZ claimed!`,
       })
